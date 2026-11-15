@@ -18,8 +18,22 @@ CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
            "sofa", "train", "tvmonitor"]
 
 @st.cache_resource
+import os
+import urllib.request
+
+PROTOTXT_URL = "https://raw.githubusercontent.com/chuanqi305/MobileNet-SSD/master/deploy.prototxt"
+CAFFEMODEL_URL = "https://github.com/chuanqi305/MobileNet-SSD/raw/master/mobilenet_iter_73000.caffemodel"
+
+PROTOTXT_PATH = "MobileNetSSD_deploy.prototxt"
+CAFFEMODEL_PATH = "MobileNetSSD_deploy.caffemodel"
+
+@st.cache_resource
 def load_model():
-    return cv2.dnn.readNetFromCaffe("MobileNetSSD_deploy.prototxt", "MobileNetSSD_deploy.caffemodel")
+    if not os.path.exists(PROTOTXT_PATH):
+        urllib.request.urlretrieve(PROTOTXT_URL, PROTOTXT_PATH)
+    if not os.path.exists(CAFFEMODEL_PATH):
+        urllib.request.urlretrieve(CAFFEMODEL_URL, CAFFEMODEL_PATH)
+    return cv2.dnn.readNetFromCaffe(PROTOTXT_PATH, CAFFEMODEL_PATH)
 
 # ---------- OCR pipeline ----------
 def run_ocr(image_np, conf_threshold):
